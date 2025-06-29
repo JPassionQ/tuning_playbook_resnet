@@ -1,0 +1,25 @@
+# 忽略 Python 编译产生的缓存文件
+__pycache__/
+*.pyc
+
+# 忽略模型、日志和输出文件
+*.pt        # PyTorch模型
+*.pkl       # pickle文件
+*.log       # 日志
+*.csv       # 实验结果
+*.json      # 配置/记录
+
+# 忽略 Mac 系统文件
+.DS_Store
+
+# 忽略虚拟环境文件夹
+venv/
+.env        # 虚拟环境配置文件
+
+# 忽略 IDE 配置文件
+.idea/              # PyCharm 或 WebStorm
+.ipynb_checkpoints/ # Jupyter自动保存
+
+# 忽略项目输出目录
+results/
+dataset/
