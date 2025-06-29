@@ -1,2 +1,2 @@
 # tuning_playbook_resnet
-基于Google的tuning_playbook和resnet，对神经网络的训练中的调参进行实践
+基于Google的tuning_playbook和resnet，进行深度学习调参实践
