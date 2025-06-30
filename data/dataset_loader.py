@@ -58,7 +58,7 @@ def get_dataloader(
     )
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
 
-# 用法示例（调试时可直接运行）
+# 调试
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
     import numpy as np
