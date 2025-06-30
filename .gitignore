@@ -23,3 +23,6 @@ venv/
 # 忽略项目输出目录
 results/
 dataset/
+
+models/model_test.py
+models/model_arch.txt
