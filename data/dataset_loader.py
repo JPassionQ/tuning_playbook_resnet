@@ -44,7 +44,7 @@ def get_dataset(
         raise ValueError(f"Unsupported dataset: {dataset_name}")
 
 def get_dataloader(
-    dataset: DataLoader,
+    dataset: Dataset,
     batch_size: int = 32,
     shuffle: bool = True,
     num_workers: int = 2,
