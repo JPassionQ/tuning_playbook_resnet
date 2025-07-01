@@ -15,8 +15,9 @@ class CINIC10Dataset(Dataset):
         assert split in ['train', 'valid', 'test'], "split 必须为 'train', 'val', 或 'test'"
         self.root_dir = os.path.join(root_dir, split)
         self.transform = transform
-        self.samples = []
+        self.data = []
         self.class_to_idx = {}
+        self.idx_to_class = {}
         self.classes = []
 
         # 读取类别
@@ -27,13 +28,13 @@ class CINIC10Dataset(Dataset):
                 self.classes.append(class_name)
                 for fname in os.listdir(class_path):
                     if fname.endswith('.png') or fname.endswith('.jpg'):
-                        self.samples.append((os.path.join(class_path, fname), idx))
+                        self.data.append((os.path.join(class_path, fname), idx))
 
     def __len__(self):
-        return len(self.samples)
+        return len(self.data)
 
     def __getitem__(self, idx):
-        img_path, label = self.samples[idx]
+        img_path, label = self.data[idx]
         image = Image.open(img_path).convert('RGB')
         if self.transform:
             image = self.transform(image)

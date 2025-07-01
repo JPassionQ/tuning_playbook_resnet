@@ -27,26 +27,27 @@ class CIFAR_10(Dataset):
 
     def __init__(
         self,
-        root: str,
-        train: bool = True,
+        root_dir: str,
+        split: str = "train",
         transform: Optional[Callable] = None,
         target_transform: Optional[Callable] = None
     ) -> None:
-        self.root = root
-        self.train = train  # training set or test set
+        self.root_dir = root_dir
+        self.split = split  # training set or test set
         self.transform = transform
         self.target_transform = target_transform
-        if self.train:
+        self.classes = []
+        if self.split == "train":
             downloaded_list = self.train_list
         else:
             downloaded_list = self.test_list
 
-        self.data: Any = []
+        self.data = []
         self.targets = []
 
         # now load the picked numpy arrays
         for file_name in downloaded_list:
-            file_path = os.path.join(self.root, self.base_folder, file_name)
+            file_path = os.path.join(self.root_dir, self.base_folder, file_name)
             with open(file_path, "rb") as f:
                 entry = pickle.load(f, encoding="latin1")
                 self.data.append(entry["data"])
@@ -61,7 +62,7 @@ class CIFAR_10(Dataset):
         self._load_meta()
 
     def _load_meta(self) -> None:
-        path = os.path.join(self.root, self.base_folder, self.meta["filename"])
+        path = os.path.join(self.root_dir, self.base_folder, self.meta["filename"])
         with open(path, "rb") as infile:
             data = pickle.load(infile, encoding="latin1")
             self.classes = data[self.meta["key"]]
@@ -92,11 +93,6 @@ class CIFAR_10(Dataset):
     def __len__(self) -> int:
         return len(self.data)
 
-    def extra_repr(self) -> str:
-        split = "Train" if self.train is True else "Test"
-        return f"Split: {split}"
-    
-
 class CIFAR_100(CIFAR_10):
 
     base_folder = "cifar-100-python"
@@ -113,12 +109,12 @@ class CIFAR_100(CIFAR_10):
     }
 
 if __name__ == "__main__":
-    CIFAR10_ROOT_DIR = "/home/jingqi/DeepLearningWorkshop/dataset/CIFAR-10/raw/"
-    CIFAR100_ROOT_DIR = "/home/jingqi/DeepLearningWorkshop/dataset/CIFAR-100/raw/"
+    CIFAR10_root_dir_DIR = "/home/jingqi/DeepLearningWorkshop/dataset/CIFAR-10/raw/"
+    CIFAR100_root_dir_DIR = "/home/jingqi/DeepLearningWorkshop/dataset/CIFAR-100/raw/"
     import matplotlib.pyplot as plt
 
     # 测试 CIFAR10
-    cifar10 = CIFAR_10(root=CIFAR10_ROOT_DIR, train=True)
+    cifar10 = CIFAR_10(root_dir=CIFAR10_root_dir_DIR, split="train")
     img10, label10 = cifar10[0]
     plt.figure()
     plt.title(f"CIFAR10 Label: {cifar10.classes[label10]}")
@@ -127,7 +123,7 @@ if __name__ == "__main__":
     print("CIFAR10 label:", cifar10.classes[label10])
 
     # 测试 CIFAR100
-    cifar100 = CIFAR_100(root=CIFAR100_ROOT_DIR, train=True)
+    cifar100 = CIFAR_100(root_dir=CIFAR100_root_dir_DIR, split="test")
     img100, label100 = cifar100[0]
     plt.figure()
     plt.title(f"CIFAR100 Label: {cifar100.classes[label100]}")

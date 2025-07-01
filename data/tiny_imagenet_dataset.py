@@ -17,9 +17,9 @@ class TinyImageNetDataset(Dataset):
         self.labels = []
         self.class_to_idx = {}
         self.idx_to_class = {}
+        self.classes = []
         self.wnids = []
         self.wnid_to_classname = {}
-        self._load_dataset()
         # 加载类别ID列表
         wnids_path = f"{root_dir}/wnids.txt"
         with open(wnids_path, "r") as f:
@@ -32,13 +32,14 @@ class TinyImageNetDataset(Dataset):
                 if len(parts) == 2:
                     wnid, classname = parts
                     self.wnid_to_classname[wnid] = classname
-
+        self.class_to_idx = {wnid: idx for idx, wnid in enumerate(self.wnids)}
+        self.idx_to_class = {idx: wnid for wnid, idx in self.class_to_idx.items()}
+        self.classes = [self.wnid_to_classname[wnid] for wnid in self.wnids]
+        self._load_dataset()
     def _load_dataset(self):
         if self.split == 'train':
             train_dir = os.path.join(self.root_dir, 'train')
             classes = sorted(os.listdir(train_dir))
-            self.class_to_idx = {cls_name: idx for idx, cls_name in enumerate(classes)}
-            self.idx_to_class = {idx: cls_name for cls_name, idx in self.class_to_idx.items()}
             for cls_name in classes:
                 img_dir = os.path.join(train_dir, cls_name, 'images')
                 img_files = os.listdir(img_dir)
@@ -55,8 +56,6 @@ class TinyImageNetDataset(Dataset):
                     parts = line.strip().split('\t')
                     img_to_class[parts[0]] = parts[1]
             classes = sorted(set(img_to_class.values()))
-            self.class_to_idx = {cls_name: idx for idx, cls_name in enumerate(classes)}
-            self.idx_to_class = {idx: cls_name for cls_name, idx in self.class_to_idx.items()}
             images_dir = os.path.join(val_dir, 'images')
             for img_file, cls_name in img_to_class.items():
                 img_path = os.path.join(images_dir, img_file)
@@ -84,13 +83,13 @@ if __name__ == "__main__":
     dataset = TinyImageNetDataset(root_dir=dataset_root, split='train')
 
     # 读取第一张图片及其标签
-    image, label = dataset[2345]
-    wnid = dataset.idx_to_class[label]
+    image, label = dataset[535]
     print("标签索引:", label)
-    print("类别名:", dataset.wnid_to_classname[wnid])
+    print("标签:", dataset.idx_to_class[label])
+    print("类别名:", dataset.classes[label])
 
     # 可视化图片
     plt.imshow(image)
-    plt.title(f"Label: {label} ({dataset.wnid_to_classname[wnid]})")
+    plt.title(f"Label: {label} ({dataset.classes[label]})")
     plt.axis('off')
     plt.show()
