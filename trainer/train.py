@@ -7,6 +7,7 @@ from torch.utils.data.distributed import DistributedSampler
 from datetime import datetime
 import torch.distributed as dist
 import argparse
+import yaml  # 新增
 
 from models.resnet import resnet18
 from data.dataset_loader import get_dataloader, get_dataset, get_transforms
@@ -17,14 +18,25 @@ from utils.plotter import plot_loss_curve
 DATA_DIR = "/home/jingqi/DeepLearningWorkshop/dataset/CIFAR-10/raw/"
 RESULTS_DIR = "/home/jingqi/DeepLearningWorkshop/results"
 os.makedirs(RESULTS_DIR, exist_ok=True)
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-BATCH_SIZE = 128
-EPOCHS = 20
-VAL_RATIO = 0.2
-NUM_CLASSES = 10
-LR = 0.1
+
+# 从yaml配置文件读取超参数
+def load_config(config_path):
+    with open(config_path, "r") as f:
+        return yaml.safe_load(f)
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', type=str, default='/home/jingqi/DeepLearningWorkshop/recipes/train_config.yaml', help='Path to config yaml')
+    args = parser.parse_args()
+    config = load_config(args.config)
+
+    # 用配置文件中的参数替换原有超参数
+    BATCH_SIZE = config.get('batch_size', 512)
+    EPOCHS = config.get('epochs', 10)
+    VAL_RATIO = config.get('val_ratio', 0.2)
+    NUM_CLASSES = config.get('num_classes', 10)
+    LR = config.get('lr', 0.1)
+
     local_rank = int(os.environ.get("LOCAL_RANK", 0))
 
     # DDP初始化，设置当前进程的分布式环境
