@@ -66,8 +66,8 @@ def main():
         logger = None
 
     # 数据集与划分
-    trainset = get_dataset(DATA_DIR, split="train",dataset_name="CIFAR10", custom_transform=get_transforms(resize=(32,32)))
-    valset = get_dataset(DATA_DIR, split="val", dataset_name="CIFAR10", custom_transform=get_transforms(resize=(32,32)))
+    trainset = get_dataset(DATA_DIR, split="train",dataset_name="CIFAR10", custom_transform=get_transforms(resize=(32,32),normalize=False))
+    valset = get_dataset(DATA_DIR, split="val", dataset_name="CIFAR10", custom_transform=get_transforms(resize=(32,32),normalize=False))
 
     # 使用DistributedSampler确保每个进程读取不同的数据子集
     train_sampler = DistributedSampler(trainset)
@@ -75,7 +75,7 @@ def main():
     train_loader = DataLoader(trainset, batch_size=TRAIN_BATCH_SIZE, sampler=train_sampler, num_workers=2, pin_memory=True)
     val_loader = DataLoader(valset, batch_size=EVAL_BATCH_SIZE, sampler=val_sampler, num_workers=2, pin_memory=True)
 
-    testset = get_dataset(DATA_DIR, split="test", dataset_name="CIFAR10", custom_transform=get_transforms(resize=(32,32)))
+    testset = get_dataset(DATA_DIR, split="test", dataset_name="CIFAR10", custom_transform=get_transforms(resize=(32,32),normalize=False))
     test_sampler = DistributedSampler(testset, shuffle=False)
     test_loader = DataLoader(testset, batch_size=EVAL_BATCH_SIZE, sampler=test_sampler, num_workers=2, pin_memory=True)
 
@@ -91,7 +91,9 @@ def main():
     train_losses, val_losses = [], []
     val_accuracies = []  # 新增
     best_val_loss = float('inf')
-
+    
+    total_steps = len(train_loader.dataset) // TRAIN_BATCH_SIZE * EPOCHS
+    step = 0
     for epoch in range(EPOCHS):
         # 设置epoch，保证不同进程shuffle一致
         train_sampler.set_epoch(epoch)
@@ -102,6 +104,7 @@ def main():
         # 使用tqdm进度条包裹train_loader
         train_iter = tqdm(train_loader, desc=f"Epoch [{epoch+1}/{EPOCHS}] Train", disable=not is_main)
         for images, labels in train_iter:
+            step += 1
             images, labels = images.to(DEVICE, non_blocking=True), labels.to(DEVICE, non_blocking=True)
             optimizer.zero_grad()
             outputs = model(images)
@@ -126,6 +129,9 @@ def main():
             dist.all_reduce(total_valid_loss, op=dist.ReduceOp.SUM)
             runing_val_loss = total_valid_loss.item()
             val_losses.append(total_valid_loss.item() / len(val_loader.dataset))
+
+            if is_main:
+                logger.log(f"steps [{step}/{total_steps}] Train Loss: {train_losses[-1]:.4f} | Val Loss: {val_losses[-1]:.4f}")
 
         # 所有进程同步loss，保证统计全局平均
         total_loss = torch.tensor(running_train_loss, device=DEVICE)
