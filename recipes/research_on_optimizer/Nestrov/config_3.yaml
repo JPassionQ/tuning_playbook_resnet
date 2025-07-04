@@ -1,0 +1,11 @@
+dataset_path: /home/jingqi/DeepLearningWorkshop/dataset/CIFAR-10/raw/
+epochs: 10
+eval_batch: 256
+eval_steps: 50
+lr: 0.01874251208690228
+model_layer: 50
+momentum: 0.8465481375205084
+num_classes: 10
+optimizer_type: Nestrov
+res_path: /home/jingqi/DeepLearningWorkshop/results/research_on_optimizer/Nestrov/config_3
+train_batch: 128

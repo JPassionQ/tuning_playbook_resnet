@@ -1,6 +1,17 @@
-optimizer: SGD
-train_size: 256
-eval_batch: 256
-epochs: 1
+# model config
+model_layer: 50 # 34, 50, 101, 152
+activation: ReLU # 
 num_classes: 10
-lr: 0.1
+
+# training config
+train_batch: 128
+eval_batch: 256
+eval_steps: 50
+epochs: 1
+optimizer_type: sgd
+lr: 0.5
+
+
+# dataset config
+dataset_path: "/home/jingqi/DeepLearningWorkshop/dataset/CIFAR-10/raw/"
+res_path: "/home/jingqi/DeepLearningWorkshop/results"

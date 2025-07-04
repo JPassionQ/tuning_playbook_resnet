@@ -15,8 +15,11 @@ def get_transforms(normalize: bool = True, resize: Optional[Tuple[int, int]] = N
         transform_list.append(transforms.ToTensor())
     if normalize:
         # 默认均值和方差，适用于ImageNet，如有需要可参数化
-        transform_list.append(transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                                   std=[0.229, 0.224, 0.225]))
+        # transform_list.append(transforms.Normalize(mean=[0.485, 0.456, 0.406],
+        #                                            std=[0.229, 0.224, 0.225]))
+        # 适用于cifar数据集
+        transform_list.append(transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], 
+                                                   std=[0.2023, 0.1994, 0.2010]))
     return transforms.Compose(transform_list)
 
 def get_dataset(
