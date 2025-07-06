@@ -1,10 +1,10 @@
-dataset_path: /home/jingqi/DeepLearningWorkshop/dataset/CIFAR-10/raw/
+dataset_path: /home/ubuntu/DeepLearningWorkshop/dataset/CIFAR-10/raw/
 epochs: 10
 eval_batch: 256
 eval_steps: 50
-lr: 0.004932545244823546
+lr: 0.06332827820603604
 model_layer: 50
 num_classes: 10
 optimizer_type: AdamW
-res_path: /home/jingqi/DeepLearningWorkshop/results/research_on_optimizer/AdamW/config_6
+res_path: /home/ubuntu/DeepLearningWorkshop/results/research_on_optimizer/AdamW/config_6
 train_batch: 128
