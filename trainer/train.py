@@ -3,12 +3,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import random_split, DataLoader
-from torch.utils.data.distributed import DistributedSampler
 from datetime import datetime
-import torch.distributed as dist
 import argparse
 import yaml
-from tqdm import tqdm 
 
 from models.resnet import resnet18, resnet34, resnet50, resnet101, resnet152
 from data.dataset_loader import get_dataloader, get_dataset, get_transforms
