@@ -26,4 +26,3 @@ dataset/
 
 models/model_test.py
 models/model_arch.txt
-recipes/
