@@ -1,10 +1,10 @@
-dataset_path: /home/jingqi/DeepLearningWorkshop/dataset/CIFAR-10/raw/
-epochs: 10
+dataset_path: /home/ubuntu/DeepLearningWorkshop/dataset/CIFAR-10/raw/
+epochs: 2
 eval_batch: 256
 eval_steps: 50
-lr: 0.021828691950982484
-model_layer: 50
+lr: 0.015535357915264659
+model_layer: 18
 num_classes: 10
 optimizer_type: NAdam
-res_path: /home/jingqi/DeepLearningWorkshop/results/research_on_optimizer/round2/NAdam/config_1
+res_path: /home/ubuntu/DeepLearningWorkshop/results/research_on_optimizer/round2/NAdam/config_1
 train_batch: 128

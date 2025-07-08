@@ -28,7 +28,7 @@ def plot_accuracy_curve(epochs, val_accuracies, save_path):
     plt.savefig(save_path)
     plt.close()
 
-def plot_hyperparam_curve(hyperparam, acc, save_path):
+def plot_hyperparam_curve(hyperparam, acc, save_path, x_name):
     """
     绘制基本超参数轴图
     :param hyperparam: 超参数取值序列
@@ -70,9 +70,9 @@ def plot_hyperparam_curve(hyperparam, acc, save_path):
     plt.scatter(feasible_hyper[top2_mask], feasible_acc[top2_mask], 
                 marker='*', color='green', s=150, label='Top 2 trials')
 
-    plt.xlabel('lr')
+    plt.xlabel(x_name)
     plt.ylabel('acc (%)')
-    plt.title('lr vs. acc')
+    plt.title(f'{x_name} vs. acc')
     plt.legend()
     plt.grid(True)
     plt.savefig(save_path)
@@ -126,6 +126,11 @@ def plot_hyperparam_2d_curve(lr_list, momentum_list, acc, save_path):
     ax.set_ylabel('momentum')
     ax.set_zlabel('acc (%)')
     ax.set_title('lr & momentum vs. acc (3D)')
+
+    # Set axis limits according to actual data range
+    ax.set_xlim(np.min(lr_arr), np.max(lr_arr))
+    ax.set_ylim(np.min(momentum_arr), np.max(momentum_arr))
+
     ax.legend()
     plt.savefig(save_path)
     plt.close()

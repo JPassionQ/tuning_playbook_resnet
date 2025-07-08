@@ -1,11 +1,11 @@
-dataset_path: /home/jingqi/DeepLearningWorkshop/dataset/CIFAR-10/raw/
-epochs: 10
+dataset_path: /home/ubuntu/DeepLearningWorkshop/dataset/CIFAR-10/raw/
+epochs: 2
 eval_batch: 256
 eval_steps: 50
-lr: 0.0010625770122768348
-model_layer: 50
-momentum: 0.9247331414454174
+lr: 0.0060783360583976445
+model_layer: 18
+momentum: 0.8325518359576062
 num_classes: 10
 optimizer_type: RMSprop
-res_path: /home/jingqi/DeepLearningWorkshop/results/research_on_optimizer/round2/RMSprop/config_2
+res_path: /home/ubuntu/DeepLearningWorkshop/results/research_on_optimizer/round2/RMSprop/config_2
 train_batch: 128

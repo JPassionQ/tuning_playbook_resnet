@@ -6,19 +6,19 @@ from hyperparameter_search import quassi_random_search
 # 每一组研究的试验次数
 n_trails = 16
 # 每一个超参数的取值范围
-lr = (0.001, 0.1)
-lr_sgd_with_momentum = (0.005, 0.03)
-lr_nesterov = (0.001, 0.03)
-lr_adam = (0.001, 0.06)
-lr_nadam = (0.001, 0.05)
-lr_adamW = (0.0006, 0.01)
-lr_rmsprop = (0.0005,0.007)
+lr_sgd = (0.07,0.09)
+lr_sgd_with_momentum = (0.02,0.03)
+lr_nesterov = (0.015,0.025)
+lr_adam = (0.0008,0.0012)
+lr_nadam = (0.0018, 0.0022)
+lr_adamW = (0.0008, 0.0012)
+lr_rmsprop = (0.008,0.012)
 
-momentum = (0.8, 0.99)
+momentum = (0.980, 0.999)
 
-research_on_optimizer_path = "/home/jingqi/DeepLearningWorkshop/recipes/research_on_optimizer/round2/"
+research_on_optimizer_path = "/home/jingqi/DeepLearningWorkshop/recipes/research_on_optimizer/round3/"
 optimizer_type = [
-    # "sgd",
+    "sgd",
     "sgd_with_momentum",
     "Nestrov",
     "Adam",
@@ -26,23 +26,23 @@ optimizer_type = [
     "AdamW",
     "RMSprop",
 ]
-model_layer = 50
+model_layer = 18
 train_batch = 128
 eval_batch = 256
 eval_step= 50
-epochs = 10
+epochs = 2
 num_classes = 10
 dataset_path = "/home/jingqi/DeepLearningWorkshop/dataset/CIFAR-10/raw/"
-res_path = "/home/jingqi/DeepLearningWorkshop/results/research_on_optimizer/round2/"
+res_path = "/home/jingqi/DeepLearningWorkshop/results/research_on_optimizer/round3/"
 
-def make_dirs():
+def make_dirs(path_to_make):
     for opt in optimizer_type:
-        path = os.path.join(research_on_optimizer_path, opt)
+        path = os.path.join(path_to_make, opt)
         if not os.path.exists(path):
             os.makedirs(path)
 # sgd配置文件
 def sgd_config():
-    param_ranges = [lr]
+    param_ranges = [lr_sgd]
     lr_sample = quassi_random_search(param_ranges, n_trails)
     for i in range(n_trails):
         config = {
@@ -180,8 +180,9 @@ def RMSprop_config():
             yaml.dump(config, f)
 
 if __name__ == "__main__":
-    # sgd_config()
-    make_dirs()
+    make_dirs(path_to_make=research_on_optimizer_path)
+    make_dirs(path_to_make=res_path)
+    sgd_config()
     sgd_with_momentum_config()
     sgd_with_nesterov_config()
     Adam_config()

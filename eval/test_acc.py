@@ -15,11 +15,11 @@ from utils.plotter import plot_loss_curve
 from utils.plotter import plot_accuracy_curve, plot_hyperparam_curve, plot_hyperparam_2d_curve
 
 DEVICE = torch.device("cuda", 0)
-model = resnet50(num_classes=10).to(DEVICE)
+model = resnet18(num_classes=10).to(DEVICE)
 
 dataset_path = "/home/jingqi/DeepLearningWorkshop/dataset/CIFAR-10/raw/"
-res_path = "/home/jingqi/DeepLearningWorkshop/results/research_on_optimizer/round1"
-recipes_path = "/home/jingqi/DeepLearningWorkshop/recipes/research_on_optimizer/round1"
+res_path = "/home/jingqi/DeepLearningWorkshop/results/research_on_optimizer/round2"
+recipes_path = "/home/jingqi/DeepLearningWorkshop/recipes/research_on_optimizer/round2"
 n_trials = 16
 
 testset = get_dataset(dataset_path, split="test", dataset_name="CIFAR10", custom_transform=get_transforms(resize=(32,32),normalize=True))
@@ -68,21 +68,27 @@ def run_eval():
 
 if __name__ == "__main__":
     # run_eval()
-    lr_list = []
-    acc_list = []
-    momentum_list = []
-    save_path = "/home/jingqi/DeepLearningWorkshop/results/research_on_optimizer/round1/sgd_with_momentum/sgd_with_momentum_with_lr_and_momentum_acc.png"
-    with open("/home/jingqi/DeepLearningWorkshop/results/research_on_optimizer/round1/sgd_with_momentum/acc.txt", "r") as f:
-        for line in f:
-            match = re.search(r'LR:\s*([\d\.eE+-]+),\s*Momentum:\s*([\w\.]+),\s*Accuracy:\s*([\d\.]+)%', line)
-            if match:
-                lr = float(match.group(1))
-                momentum = float(match.group(2))
-                acc = float(match.group(3))
-                lr_list.append(lr)
-                momentum_list.append(momentum)
-                acc_list.append(acc)
-    # plot_hyperparam_curve(lr_list, acc_list, save_path)
-    # plot_hyperparam_curve(momentum_list, acc_list, save_path)
-    plot_hyperparam_2d_curve(lr_list, momentum_list, acc_list, save_path)
+    for type in optimizer_type:
+        lr_list = []
+        acc_list = []
+        momentum_list = []
+        lr_path = f"/home/jingqi/DeepLearningWorkshop/results/research_on_optimizer/round2/{type}/{type}_with_lr_acc.png"
+        momentum_path = f"/home/jingqi/DeepLearningWorkshop/results/research_on_optimizer/round2/{type}/{type}_with_momentum_acc.png"
+        both_path = f"/home/jingqi/DeepLearningWorkshop/results/research_on_optimizer/round2/{type}/{type}_with_lr_and_momentum_acc.png"
+        with open(f"/home/jingqi/DeepLearningWorkshop/results/research_on_optimizer/round2/{type}/acc.txt", "r") as f:
+            for line in f:
+                match = re.search(r'LR:\s*([\d\.eE+-]+),\s*Momentum:\s*([\w\.]+),\s*Accuracy:\s*([\d\.]+)%', line)
+                if match:
+                    lr = float(match.group(1))
+                    momentum = match.group(2)
+                    if momentum != 'none':
+                        momentum = float(momentum)
+                        momentum_list.append(momentum)
+                    acc = float(match.group(3))
+                    lr_list.append(lr)
+                    acc_list.append(acc)
+        plot_hyperparam_curve(lr_list, acc_list, lr_path, x_name="lr")
+        if len(momentum_list) != 0:
+            plot_hyperparam_curve(momentum_list, acc_list, momentum_path, x_name="momentum")
+            plot_hyperparam_2d_curve(lr_list, momentum_list, acc_list, both_path)
     

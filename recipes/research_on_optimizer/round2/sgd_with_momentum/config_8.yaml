@@ -1,11 +1,11 @@
-dataset_path: /home/jingqi/DeepLearningWorkshop/dataset/CIFAR-10/raw/
-epochs: 10
+dataset_path: /home/ubuntu/DeepLearningWorkshop/dataset/CIFAR-10/raw/
+epochs: 2
 eval_batch: 256
 eval_steps: 50
-lr: 0.02414758002281394
-model_layer: 50
-momentum: 0.8601416444780037
+lr: 0.008188195589586379
+model_layer: 18
+momentum: 0.9603966345373512
 num_classes: 10
 optimizer_type: sgd_with_momentum
-res_path: /home/jingqi/DeepLearningWorkshop/results/research_on_optimizer/round2/sgd_with_momentum/config_8
+res_path: /home/ubuntu/DeepLearningWorkshop/results/research_on_optimizer/round2/sgd_with_momentum/config_8
 train_batch: 128
