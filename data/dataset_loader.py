@@ -7,7 +7,7 @@ from .tiny_imagenet_dataset import TinyImageNetDataset
 from .cinic_10_dataset import CINIC10Dataset
 
 
-def get_transforms(normalize: bool = True, resize: Optional[Tuple[int, int]] = None, to_tensor: bool = True):
+def get_transforms(normalize: bool = True, resize: Optional[Tuple[int, int]] = None, to_tensor: bool = True, random_crop: bool = False, random_horizontal_filp: bool = False, random_rotate: bool = False, color_jitter: bool = False, gaussian_blur: bool = False):
     transform_list = []
     if resize:
         transform_list.append(transforms.Resize(resize))
@@ -20,6 +20,16 @@ def get_transforms(normalize: bool = True, resize: Optional[Tuple[int, int]] = N
         # 适用于cifar数据集
         transform_list.append(transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], 
                                                    std=[0.2023, 0.1994, 0.2010]))
+    if random_crop:
+        transform_list.append(transforms.RandomCrop(size=32, padding=4))
+    if random_horizontal_filp:
+        transform_list.append(transforms.RandomHorizontalFlip(p=0.5))
+    if random_rotate:
+        transform_list.append(transforms.RandomRotation(degrees=15))
+    if color_jitter:
+        transform_list.append(transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1))
+    if gaussian_blur:
+        transform_list.append(transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 0.5)))
     return transforms.Compose(transform_list)
 
 def get_dataset(

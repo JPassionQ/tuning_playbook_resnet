@@ -1,0 +1,16 @@
+data_augmentation:
+  color_jitter: true
+  gaussian_blur: true
+  random_crop: true
+  random_horizontal_filp: true
+  random_rotate: true
+dataset_path: /home/jingqi/DeepLearningWorkshop/dataset/CIFAR-10/raw/
+epochs: 2
+eval_batch: 256
+eval_steps: 50
+lr: 0.001
+model_layer: 18
+num_classes: 10
+optimizer_type: Adam
+res_path: /home/jingqi/DeepLearningWorkshop/results/research_on_augmentation/round1/AdamW/config_15
+train_batch: 128

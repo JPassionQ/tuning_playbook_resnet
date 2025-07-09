@@ -1,0 +1,16 @@
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1/config_7.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1/config_6.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1/config_4.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1/config_10.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1/config_3.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1/config_8.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1/config_1.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1/config_14.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1/config_0.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1/config_12.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1/config_11.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1/config_13.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1/config_2.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1/config_15.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1/config_9.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1/config_5.yaml

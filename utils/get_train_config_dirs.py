@@ -8,8 +8,8 @@ def get_all_file_paths(directory):
     return file_paths
 
 if __name__ == "__main__":
-    dir_path = "/home/jingqi/DeepLearningWorkshop/recipes/research_on_optimizer"
+    dir_path = "/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/round1"
     files = get_all_file_paths(dir_path)
-    with open("/home/jingqi/DeepLearningWorkshop/recipes/research_on_optimizers_recipes.txt", "w") as f:
+    with open("/home/jingqi/DeepLearningWorkshop/recipes/research_on_augmentation/research_on_augmentation_recipes.txt", "w") as f:
         for file in files:
             f.write(file + "\n")

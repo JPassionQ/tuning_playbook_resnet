@@ -38,6 +38,7 @@ def load_config(config_path):
     # dataset config
     dataset_config['dataset_path'] = config.get('dataset_path')
     dataset_config['res_path'] = config.get('res_path')
+    dataset_config['data_augmentation'] = config.get('data_augmentation') # 字典
 
     return model_config, training_config, dataset_config
 
@@ -48,12 +49,14 @@ def main():
     args = parser.parse_args()
     config_path = args.config_path
 
+    # 模型相关配置
     model_config, training_config, dataset_config = load_config(config_path)
     
     num_classes = model_config['num_classes']
     model_layer = model_config['model_layer']
     activation = model_config['activation']
 
+    # 训练相关配置
     train_batch_size = training_config['train_batch']
     eval_batch_size = training_config['eval_batch']
     optimizer_type = training_config['optimizer_type']
@@ -63,8 +66,10 @@ def main():
     momentum = training_config['momentum']
     eval_steps = training_config['eval_steps']
 
+    # 数据集相关配置
     dataset_path = dataset_config['dataset_path']
     res_path = dataset_config['res_path']
+    data_augmentation = dataset_config['data_augmentation']  # 字典
 
     DEVICE = torch.device("cuda", 0)
 
@@ -85,7 +90,15 @@ def main():
     logger.log(f"Training started at {datetime.now()}", verbose=True)
 
     # 数据集与划分
-    trainset = get_dataset(dataset_path, split="train",dataset_name="CIFAR10", custom_transform=get_transforms(resize=(32,32),normalize=True))
+    trainset = get_dataset(dataset_path, split="train",dataset_name="CIFAR10", custom_transform=get_transforms(
+        resize=(32,32),
+        normalize=True,
+        random_crop=data_augmentation.get('random_crop', False),
+        random_horizontal_filp=data_augmentation.get('random_horizontal_filp', False),
+        random_rotate=data_augmentation.get('random_rotate',False),
+        color_jitter=data_augmentation.get('color_jitter', False),
+        gaussian_blur=data_augmentation.get('gaussian_blur', False))
+    )
     valset = get_dataset(dataset_path, split="val", dataset_name="CIFAR10", custom_transform=get_transforms(resize=(32,32),normalize=True))
 
     train_loader = DataLoader(trainset, batch_size=train_batch_size, shuffle=True, num_workers=2, pin_memory=True)
