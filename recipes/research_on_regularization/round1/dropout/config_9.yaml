@@ -1,6 +1,5 @@
 dataset_path: /home/jingqi/DeepLearningWorkshop/dataset/CIFAR-10/raw/
-dropout: 0.5
-weight_decay: 0.0004
+dropout: 0.9
 epochs: 20
 eval_batch: 256
 eval_steps: 50
@@ -9,5 +8,5 @@ lr: 0.001
 model_layer: 18
 num_classes: 10
 optimizer_type: Adam
-res_path: /home/jingqi/DeepLearningWorkshop/results/research_on_regularization/round1/dropout/config_0
+res_path: /home/jingqi/DeepLearningWorkshop/results/research_on_regularization/round1/dropout/config_9
 train_batch: 128

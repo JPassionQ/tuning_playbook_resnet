@@ -26,6 +26,7 @@ def load_config(config_path):
     model_config['num_classes'] = config.get('num_classes', 10)
     model_config['model_layer'] = config.get('model_layer', 50)
     model_config['activation'] = config.get('activation', 'relu')
+    model_config['dropout'] = config.get('dropout', 0.0)
 
     # training config
     training_config['train_batch'] = config.get('train_batch', 128)
@@ -33,15 +34,16 @@ def load_config(config_path):
     training_config['optimizer_type'] = config.get('optimizer_type', 'sgd')
     training_config['epochs'] = config.get('epochs', 10)
     training_config['lr'] = config.get('lr', 0.1)
-    training_config['weight_decay'] = config.get('weight_decay', 0.0001)
+    training_config['weight_decay'] = config.get('weight_decay', 0)
     training_config['momentum'] = config.get('momentum', 0.9)
     training_config['eval_steps'] = config.get('eval_steps', 50)
+    training_config['log_steps'] = config.get('log_steps', 1)
     
     
     # dataset config
     dataset_config['dataset_path'] = config.get('dataset_path')
     dataset_config['res_path'] = config.get('res_path')
-    dataset_config['data_augmentation'] = config.get('data_augmentation') # 字典
+    dataset_config['data_augmentation'] = config.get('data_augmentation', None) # 字典
 
     return model_config, training_config, dataset_config
 
@@ -66,6 +68,7 @@ def main():
     num_classes = model_config['num_classes']
     model_layer = model_config['model_layer']
     activation = model_config['activation']
+    dropout = model_config['dropout']
 
     # 训练相关配置
     train_batch_size = training_config['train_batch']
@@ -76,6 +79,7 @@ def main():
     weight_decay = training_config['weight_decay']  
     momentum = training_config['momentum']
     eval_steps = training_config['eval_steps']
+    log_steps = training_config['log_steps']
 
     # 数据集相关配置
     dataset_path = dataset_config['dataset_path']
@@ -104,11 +108,12 @@ def main():
     trainset = get_dataset(dataset_path, split="train",dataset_name="CIFAR10", custom_transform=get_transforms(
         resize=(32,32),
         normalize=True,
-        random_crop=data_augmentation.get('random_crop', False),
-        random_horizontal_filp=data_augmentation.get('random_horizontal_filp', False),
-        random_rotate=data_augmentation.get('random_rotate',False),
-        color_jitter=data_augmentation.get('color_jitter', False),
-        gaussian_blur=data_augmentation.get('gaussian_blur', False))
+        # random_crop=data_augmentation.get('random_crop', False),
+        # random_horizontal_filp=data_augmentation.get('random_horizontal_filp', False),
+        # random_rotate=data_augmentation.get('random_rotate',False),
+        # color_jitter=data_augmentation.get('color_jitter', False),
+        # gaussian_blur=data_augmentation.get('gaussian_blur', False)
+        )
     )
     valset = get_dataset(dataset_path, split="val", dataset_name="CIFAR10", custom_transform=get_transforms(resize=(32,32),normalize=True))
 
@@ -120,31 +125,31 @@ def main():
 
     # 模型层数
     if model_layer == 18:
-        model = resnet18(num_classes=num_classes).to(DEVICE)
+        model = resnet18(num_classes=num_classes, dropout_p=dropout).to(DEVICE)
     elif model_layer == 34:
-        model = resnet34(num_classes=num_classes).to(DEVICE)
+        model = resnet34(num_classes=num_classes, dropout_p=dropout).to(DEVICE)
     elif model_layer == 50:
-        model = resnet50(num_classes=num_classes).to(DEVICE)
+        model = resnet50(num_classes=num_classes, dropout_p=dropout).to(DEVICE)
     elif model_layer == 101:
-        model = resnet101(num_classes=num_classes).to(DEVICE)
+        model = resnet101(num_classes=num_classes, dropout_p=dropout).to(DEVICE)
     elif model_layer == 152:
-        model = resnet152(num_classes=num_classes).to(DEVICE)
+        model = resnet152(num_classes=num_classes, dropout_p=dropout).to(DEVICE)
     
     criterion = nn.CrossEntropyLoss().to(DEVICE)
     if optimizer_type == "sgd":
-        optimizer = optim.SGD(model.parameters(), lr=lr)
+        optimizer = optim.SGD(model.parameters(), lr=lr, weight_decay=weight_decay)
     elif optimizer_type == "sgd_with_momentum":
-        optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
+        optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum, weight_decay=weight_decay)
     elif optimizer_type == "Nestrov":
-        optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum, nesterov=True)
+        optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum, nesterov=True, weight_decay=weight_decay)
     elif optimizer_type == "Adam":
-        optimizer = optim.Adam(model.parameters(), lr=lr)
+        optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     elif optimizer_type == "NAdam":
-        optimizer = optim.NAdam(model.parameters(), lr=lr)
+        optimizer = optim.NAdam(model.parameters(), lr=lr, weight_decay=weight_decay)
     elif optimizer_type == "AdamW":
-        optimizer = optim.AdamW(model.parameters(), lr=lr)
+        optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     elif optimizer_type == "RMSprop":
-        optimizer = optim.RMSprop(model.parameters(), lr=lr, momentum=momentum)
+        optimizer = optim.RMSprop(model.parameters(), lr=lr, momentum=momentum, weight_decay=weight_decay)
 
     train_losses, val_losses = [], []
     val_accuracies = []  # 新增
@@ -164,20 +169,9 @@ def main():
             optimizer.step()
             # 统计每个step的损失（取平均）
             step_loss = loss.item()
-            train_losses.append(step_loss)
-
-            # 统计验证集损失
-            model.eval()
-            valid_loss = 0.0
-            with torch.no_grad():
-                for images, labels in val_loader:
-                    images, labels = images.to(DEVICE, non_blocking=True), labels.to(DEVICE, non_blocking=True)
-                    outputs = model(images)
-                    loss = criterion(outputs, labels)
-                    valid_loss += loss.item() * images.size(0)
-            val_losses.append(valid_loss / len(val_loader.dataset))
-
-            logger.log(f"steps [{step}/{total_steps}] Train Loss: {train_losses[-1]:.4f} | Val Loss: {val_losses[-1]:.4f}")
+            logger.log(f"steps [{step}/{total_steps}] Train Loss: {step_loss:.2f}")
+            if step % log_steps == 0:
+                train_losses.append(step_loss)
 
             # 间隔一定的step数进行模型评估
             if step % eval_steps == 0:
@@ -185,6 +179,7 @@ def main():
                 model.eval()
                 correct = 0
                 total = 0
+                valid_loss = 0.0
                 with torch.no_grad():
                     for images, labels in val_loader:
                         images, labels = images.to(DEVICE, non_blocking=True), labels.to(DEVICE, non_blocking=True)
@@ -194,9 +189,11 @@ def main():
                         _, predicted = torch.max(outputs, 1)
                         total += labels.size(0)
                         correct += (predicted == labels).sum().item()
+                        valid_loss += loss.item() * images.size(0)
                 val_acc = 100. * correct / total
                 val_accuracies.append(val_acc)
-                logger.log(f"step [{step}/{total_steps}] | Val Acc: {val_acc:.2f}%", verbose=True)
+                val_losses.append(valid_loss / len(val_loader.dataset))
+                logger.log(f"step [{step}/{total_steps}] | Val Acc: {val_acc:.2f}% | Val Loss: {val_losses[-1]:.2f}", verbose=True)
                 # 保存最佳性能的模型权重
                 if val_acc > best_val_acc:
                     best_val_acc = val_acc
@@ -221,7 +218,7 @@ def main():
 
     # 只绘制loss曲线和准确率曲线
     plot_loss_curve(
-        range(1, len(train_losses)+1),
+        total_steps,
         train_losses,
         val_losses,
         loss_curve_path

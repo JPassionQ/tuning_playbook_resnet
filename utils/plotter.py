@@ -9,20 +9,27 @@ def smooth_curve(values, window_size=5):
     kernel = np.ones(window_size) / window_size
     return np.convolve(values, kernel, mode='same')
 
-def plot_loss_curve(epochs, train_losses, val_losses, save_path, smooth_window=5):
+def plot_loss_curve(total_steps, train_losses, val_losses, save_path, smooth_window=15):
     plt.figure()
-    # 原始曲线，减小线宽
-    plt.plot(epochs, train_losses, label='Train Loss (raw)', alpha=0.5, linewidth=1)
-    plt.plot(epochs, val_losses, label='Val Loss (raw)', alpha=0.5, linewidth=1)
-    # 平滑曲线，减小线宽
+    # 原始曲线
+    xmin = 0
+    xmax = total_steps
+    train_steps = np.linspace(xmin, xmax, len(train_losses))
+    val_steps = np.linspace(xmin, xmax, len(val_losses))
+    plt.plot(train_steps, train_losses, label='Train Loss (raw)', alpha=0.5, linewidth=1)
+    plt.plot(val_steps, val_losses, label='Val Loss (raw)', alpha=0.5, linewidth=1)
+    # 平滑曲线
     train_losses_smooth = smooth_curve(train_losses, window_size=smooth_window)
     val_losses_smooth = smooth_curve(val_losses, window_size=smooth_window)
-    plt.plot(epochs, train_losses_smooth, label='Train Loss (smoothed)', linewidth=1.8)
-    plt.plot(epochs, val_losses_smooth, label='Val Loss (smoothed)', linewidth=1.8)
-    plt.xlabel('steps')
+    plt.plot(train_steps, train_losses_smooth, label='Train Loss (smoothed)', linewidth=1.8)
+    plt.plot(val_steps, val_losses_smooth, label='Val Loss (smoothed)', linewidth=1.8)
+    
+    plt.xlim(xmin, xmax)
+    plt.xlabel('Step')
     plt.ylabel('Loss')
     plt.legend()
     plt.title('Train/Val Loss Curve')
+    plt.grid(True)
     plt.savefig(save_path)
     plt.close()
 
