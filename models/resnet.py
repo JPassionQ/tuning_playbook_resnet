@@ -59,10 +59,11 @@ class Bottleneck(nn.Module):
         return out
 
 class ResNet(nn.Module):
-    def __init__(self, block, layers, num_classes=1000):
+    def __init__(self, block, layers, num_classes=1000, dropout_p=0.5):
         """
         block: BasicBlock 或 Bottleneck，表示残差块的类型
         layers: 整数列表，每个 ResNet 层中包含的残差块数量，例如 [2, 2, 2, 2] 表示 ResNet-18 的配置
+        dropout_p: Dropout概率，默认0.5
         """
         super(ResNet, self).__init__()
         self.in_planes = 64
@@ -81,6 +82,7 @@ class ResNet(nn.Module):
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.dropout = nn.Dropout(p=dropout_p)
         self.fc = nn.Linear(512 * block.expansion, num_classes)
 
     def _make_layer(self, block, planes, blocks, stride=1):
@@ -109,20 +111,21 @@ class ResNet(nn.Module):
         x = self.layer4(x)
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
+        x = self.dropout(x)
         x = self.fc(x)
         return x
 
-def resnet18(num_classes=1000):
-    return ResNet(BasicBlock, [2, 2, 2, 2], num_classes)
+def resnet18(num_classes=1000, dropout_p=0.5):
+    return ResNet(BasicBlock, [2, 2, 2, 2], num_classes, dropout_p=dropout_p)
 
-def resnet34(num_classes=1000):
-    return ResNet(BasicBlock, [3, 4, 6, 3], num_classes)
+def resnet34(num_classes=1000, dropout_p=0.5):
+    return ResNet(BasicBlock, [3, 4, 6, 3], num_classes, dropout_p=dropout_p)
 
-def resnet50(num_classes=1000):
-    return ResNet(Bottleneck, [3, 4, 6, 3], num_classes)
+def resnet50(num_classes=1000, dropout_p=0.5):
+    return ResNet(Bottleneck, [3, 4, 6, 3], num_classes, dropout_p=dropout_p)
 
-def resnet101(num_classes=1000):
-    return ResNet(Bottleneck, [3, 4, 23, 3], num_classes)
+def resnet101(num_classes=1000, dropout_p=0.5):
+    return ResNet(Bottleneck, [3, 4, 23, 3], num_classes, dropout_p=dropout_p)
 
-def resnet152(num_classes=1000):
-    return ResNet(Bottleneck, [3, 8, 36, 3], num_classes)
+def resnet152(num_classes=1000, dropout_p=0.5):
+    return ResNet(Bottleneck, [3, 8, 36, 3], num_classes, dropout_p=dropout_p)

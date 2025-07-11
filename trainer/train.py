@@ -6,6 +6,8 @@ from torch.utils.data import random_split, DataLoader
 from datetime import datetime
 import argparse
 import yaml
+import random
+import numpy as np
 
 from models.resnet import resnet18, resnet34, resnet50, resnet101, resnet152
 from data.dataset_loader import get_dataloader, get_dataset, get_transforms
@@ -35,6 +37,7 @@ def load_config(config_path):
     training_config['momentum'] = config.get('momentum', 0.9)
     training_config['eval_steps'] = config.get('eval_steps', 50)
     
+    
     # dataset config
     dataset_config['dataset_path'] = config.get('dataset_path')
     dataset_config['res_path'] = config.get('res_path')
@@ -42,6 +45,14 @@ def load_config(config_path):
 
     return model_config, training_config, dataset_config
 
+#设置全局种子
+def set_seed(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 def main():
     parser = argparse.ArgumentParser(description="Train a ResNet on CIFAR10")

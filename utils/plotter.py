@@ -1,9 +1,24 @@
 import matplotlib.pyplot as plt
 import numpy as np
-def plot_loss_curve(epochs, train_losses, val_losses, save_path):
+
+def smooth_curve(values, window_size=5):
+    """简单滑动平均平滑曲线"""
+    if window_size < 2:
+        return np.array(values)
+    values = np.array(values)
+    kernel = np.ones(window_size) / window_size
+    return np.convolve(values, kernel, mode='same')
+
+def plot_loss_curve(epochs, train_losses, val_losses, save_path, smooth_window=5):
     plt.figure()
-    plt.plot(epochs, train_losses, label='Train Loss')
-    plt.plot(epochs, val_losses, label='Val Loss')
+    # 原始曲线，减小线宽
+    plt.plot(epochs, train_losses, label='Train Loss (raw)', alpha=0.5, linewidth=1)
+    plt.plot(epochs, val_losses, label='Val Loss (raw)', alpha=0.5, linewidth=1)
+    # 平滑曲线，减小线宽
+    train_losses_smooth = smooth_curve(train_losses, window_size=smooth_window)
+    val_losses_smooth = smooth_curve(val_losses, window_size=smooth_window)
+    plt.plot(epochs, train_losses_smooth, label='Train Loss (smoothed)', linewidth=1.8)
+    plt.plot(epochs, val_losses_smooth, label='Val Loss (smoothed)', linewidth=1.8)
     plt.xlabel('steps')
     plt.ylabel('Loss')
     plt.legend()
@@ -11,7 +26,7 @@ def plot_loss_curve(epochs, train_losses, val_losses, save_path):
     plt.savefig(save_path)
     plt.close()
 
-def plot_accuracy_curve(epochs, val_accuracies, save_path):
+def plot_accuracy_curve(epochs, val_accuracies, save_path, smooth_window=5):
     """
     绘制验证集准确率曲线
     :param epochs: epoch编号序列
@@ -19,7 +34,11 @@ def plot_accuracy_curve(epochs, val_accuracies, save_path):
     :param save_path: 保存图片的路径
     """
     plt.figure()
-    plt.plot(epochs, val_accuracies, label='Val Accuracy')
+    # 原始曲线，减小线宽
+    plt.plot(epochs, val_accuracies, label='Val Accuracy (raw)', alpha=0.5, linewidth=1)
+    # 平滑曲线，减小线宽
+    val_accuracies_smooth = smooth_curve(val_accuracies, window_size=smooth_window)
+    plt.plot(epochs, val_accuracies_smooth, label='Val Accuracy (smoothed)', linewidth=1.8)
     plt.xlabel('Epoch')
     plt.ylabel('Accuracy (%)')
     plt.title('Validation Accuracy Curve')
