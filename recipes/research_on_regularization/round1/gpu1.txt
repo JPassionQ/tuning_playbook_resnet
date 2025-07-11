@@ -1,0 +1,9 @@
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/dropout/config_6.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/weight_decay/config_2.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/weight_decay/config_6.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/weight_decay/config_3.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/weight_decay/config_7.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/weight_decay/config_1.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/weight_decay/config_5.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/weight_decay/config_0.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/weight_decay/config_4.yaml

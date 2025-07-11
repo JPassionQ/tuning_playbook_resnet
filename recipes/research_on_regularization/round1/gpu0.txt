@@ -1,0 +1,9 @@
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/dropout/config_8.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/dropout/config_0.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/dropout/config_4.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/dropout/config_1.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/dropout/config_5.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/dropout/config_9.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/dropout/config_3.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/dropout/config_7.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_regularization/round1/dropout/config_2.yaml
