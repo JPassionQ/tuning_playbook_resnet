@@ -1,0 +1,13 @@
+activation: silu
+dataset_path: /home/jingqi/DeepLearningWorkshop/dataset/CIFAR-10/raw/
+epochs: 20
+eval_batch: 256
+eval_steps: 50
+log_steps: 10
+lr: 0.001
+model_layer: 18
+num_classes: 10
+optimizer_type: Adam
+res_path: /home/jingqi/DeepLearningWorkshop/results/research_on_activation/round1/config_4
+train_batch: 128
+weight_decay: 0.0001

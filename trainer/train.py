@@ -125,15 +125,15 @@ def main():
 
     # 模型层数
     if model_layer == 18:
-        model = resnet18(num_classes=num_classes, dropout_p=dropout).to(DEVICE)
+        model = resnet18(num_classes=num_classes, dropout_p=dropout, activation=activation).to(DEVICE)
     elif model_layer == 34:
-        model = resnet34(num_classes=num_classes, dropout_p=dropout).to(DEVICE)
+        model = resnet34(num_classes=num_classes, dropout_p=dropout,activation=activation).to(DEVICE)
     elif model_layer == 50:
-        model = resnet50(num_classes=num_classes, dropout_p=dropout).to(DEVICE)
+        model = resnet50(num_classes=num_classes, dropout_p=dropout,activation=activation).to(DEVICE)
     elif model_layer == 101:
-        model = resnet101(num_classes=num_classes, dropout_p=dropout).to(DEVICE)
+        model = resnet101(num_classes=num_classes, dropout_p=dropout,activation=activation).to(DEVICE)
     elif model_layer == 152:
-        model = resnet152(num_classes=num_classes, dropout_p=dropout).to(DEVICE)
+        model = resnet152(num_classes=num_classes, dropout_p=dropout,activation=activation).to(DEVICE)
     
     criterion = nn.CrossEntropyLoss().to(DEVICE)
     if optimizer_type == "sgd":

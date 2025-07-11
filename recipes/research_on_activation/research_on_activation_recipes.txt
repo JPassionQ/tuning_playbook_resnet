@@ -1,0 +1,5 @@
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_activation/round1/config_4.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_activation/round1/config_3.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_activation/round1/config_1.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_activation/round1/config_0.yaml
+/home/jingqi/DeepLearningWorkshop/recipes/research_on_activation/round1/config_2.yaml

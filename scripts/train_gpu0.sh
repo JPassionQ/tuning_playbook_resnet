@@ -1,6 +1,6 @@
 
-N=2
-CONFIG_LIST="/home/jingqi/DeepLearningWorkshop/recipes/research_on_optimizers_recipes.txt"
+N=1
+CONFIG_LIST="/home/jingqi/DeepLearningWorkshop/recipes/research_on_activation/research_on_activation_recipes.txt"
 
 # 捕获 SIGINT/SIGTERM 并杀死所有子进程
 trap 'echo "Killing all child processes..."; kill 0; exit 1' SIGINT SIGTERM
