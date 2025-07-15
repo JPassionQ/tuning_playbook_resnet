@@ -55,29 +55,46 @@ def plot_loss_curve(total_steps, train_losses, val_losses, save_path):
     plt.savefig(save_path)
     plt.close()
 
-def plot_train_loss_curve(total_steps, train_losses, save_path):
+def plot_loss_compare_curve(total_steps, losses, save_path, loss_type):
     plt.figure()
-    optimizer_types = [
-        "sgd",
-        "sgd_with_momentum",
-        "Nestrov",
-        "Adam",
-        "NAdam",
-        "AdamW",
-        "RMSprop"
-    ]
     # 原始曲线
     xmin = 0
     xmax = total_steps
-    train_steps = np.linspace(xmin, xmax, len(train_losses))
-    for type_ in optimizer_types:
-        train_losses_smooth = ema_smooth_curve(train_losses[type_])
-        plt.plot(train_steps, train_losses_smooth, label=f"{type_}", linewidth=1.2)
+    true_loss_steps = 0
+    for _, v in losses.items():
+        true_loss_steps = len(v)
+        break
+    train_steps = np.linspace(xmin, xmax, true_loss_steps)
+    for type_, loss in losses.items():
+        losses_smooth = ema_smooth_curve(losses[type_])
+        plt.plot(train_steps, losses_smooth, label=f"{type_}", linewidth=1.2)
     plt.xlim(xmin, xmax)
     plt.xlabel('Step')
-    plt.ylabel('Train Loss')
+    plt.ylabel(f'{loss_type} Loss')
     plt.legend()
-    plt.title('Train Loss Curve')
+    plt.title(f'{loss_type} Loss Curve')
+    plt.grid(True)
+    plt.savefig(save_path)
+    plt.close()
+
+def plot_acc_compare_curve(total_steps, valid_accs, save_path):
+    plt.figure()
+    # 原始曲线
+    xmin = 0
+    xmax = total_steps
+    true_acc_steps = 0
+    for _, v in valid_accs.items():
+        true_acc_steps = len(v)
+        break
+    train_steps = np.linspace(xmin, xmax, true_acc_steps)
+    for type_, acc in valid_accs.items():
+        acc_smooth = ema_smooth_curve(acc)
+        plt.plot(train_steps, acc_smooth, label=f"{type_}", linewidth=1.2)
+    plt.xlim(xmin, xmax)
+    plt.xlabel('Step')
+    plt.ylabel('Accuracy (%)')
+    plt.legend()
+    plt.title('Validation Accuracy Curve')
     plt.grid(True)
     plt.savefig(save_path)
     plt.close()

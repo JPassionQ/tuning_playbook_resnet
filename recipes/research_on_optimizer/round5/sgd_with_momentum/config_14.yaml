@@ -1,0 +1,19 @@
+data_augmentation:
+  color_jitter: false
+  gaussian_blur: false
+  random_crop: false
+  random_horizontal_filp: false
+  random_rotate: false
+dataset_path: /home/ubuntu/DeepLearningWorkshop/dataset/CIFAR-10/raw/
+epochs: 40
+eval_batch: 256
+eval_steps: 100
+log_steps: 50
+lr: 0.0009645195663309191
+model_layer: 18
+momentum: 0.9
+num_classes: 10
+optimizer_type: sgd_with_momentum
+res_path: /home/ubuntu/DeepLearningWorkshop/results/research_on_optimizer/round5/sgd_with_momentum/config_14
+train_batch: 128
+weight_decay: 0.0005
