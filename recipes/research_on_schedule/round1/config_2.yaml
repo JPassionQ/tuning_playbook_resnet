@@ -1,0 +1,19 @@
+dataset_path: /home/jingqi/DeepLearningWorkshop/dataset/CIFAR-10/raw/
+data_augmentation:
+  color_jitter: false
+  gaussian_blur: false
+  random_crop: true
+  random_horizontal_filp: true
+  random_rotate: false
+weight_decay: 5.0e-04
+epochs: 200
+eval_batch: 256
+eval_steps: 100
+log_steps: 50
+lr: 0.1
+momentum: 0.9
+model_layer: 18
+num_classes: 10
+optimizer_type: sgd_with_momentum
+res_path: /home/jingqi/DeepLearningWorkshop/results/research_on_schedule/round1/config_2
+train_batch: 128

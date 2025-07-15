@@ -2,14 +2,36 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def smooth_curve(values, window_size=5):
-    """简单滑动平均平滑曲线"""
+    """简单滑动平均平滑曲线，避免两端异常"""
     if window_size < 2:
         return np.array(values)
     values = np.array(values)
     kernel = np.ones(window_size) / window_size
-    return np.convolve(values, kernel, mode='same')
+    # 只对中间部分做平滑
+    smooth = np.convolve(values, kernel, mode='valid')
+    # 两端补原始值
+    pad = (window_size - 1) // 2
+    left = values[:pad]
+    right = values[-pad:] if pad > 0 else np.array([])
+    return np.concatenate([left, smooth, right])
 
-def plot_loss_curve(total_steps, train_losses, val_losses, save_path, smooth_window=15):
+def ema_smooth_curve(values, alpha=0.8):
+    """
+    使用指数移动平均（EMA）平滑曲线
+    :param values: 输入序列
+    :param alpha: 平滑系数，0<alpha<1，越大越平滑
+    :return: 平滑后的序列
+    """
+    values = np.array(values)
+    if len(values) == 0:
+        return values
+    smoothed = np.zeros_like(values, dtype=float)
+    smoothed[0] = values[0]
+    for i in range(1, len(values)):
+        smoothed[i] = alpha * smoothed[i-1] + (1 - alpha) * values[i]
+    return smoothed
+
+def plot_loss_curve(total_steps, train_losses, val_losses, save_path):
     plt.figure()
     # 原始曲线
     xmin = 0
@@ -19,8 +41,8 @@ def plot_loss_curve(total_steps, train_losses, val_losses, save_path, smooth_win
     plt.plot(train_steps, train_losses, label='Train Loss (raw)', alpha=0.5, linewidth=1)
     plt.plot(val_steps, val_losses, label='Val Loss (raw)', alpha=0.5, linewidth=1)
     # 平滑曲线
-    train_losses_smooth = smooth_curve(train_losses, window_size=smooth_window)
-    val_losses_smooth = smooth_curve(val_losses, window_size=smooth_window)
+    train_losses_smooth = ema_smooth_curve(train_losses)
+    val_losses_smooth = ema_smooth_curve(val_losses)
     plt.plot(train_steps, train_losses_smooth, label='Train Loss (smoothed)', linewidth=1.8)
     plt.plot(val_steps, val_losses_smooth, label='Val Loss (smoothed)', linewidth=1.8)
     
@@ -33,7 +55,34 @@ def plot_loss_curve(total_steps, train_losses, val_losses, save_path, smooth_win
     plt.savefig(save_path)
     plt.close()
 
-def plot_accuracy_curve(epochs, val_accuracies, save_path, smooth_window=5):
+def plot_train_loss_curve(total_steps, train_losses, save_path):
+    plt.figure()
+    optimizer_types = [
+        "sgd",
+        "sgd_with_momentum",
+        "Nestrov",
+        "Adam",
+        "NAdam",
+        "AdamW",
+        "RMSprop"
+    ]
+    # 原始曲线
+    xmin = 0
+    xmax = total_steps
+    train_steps = np.linspace(xmin, xmax, len(train_losses))
+    for type_ in optimizer_types:
+        train_losses_smooth = ema_smooth_curve(train_losses[type_])
+        plt.plot(train_steps, train_losses_smooth, label=f"{type_}", linewidth=1.2)
+    plt.xlim(xmin, xmax)
+    plt.xlabel('Step')
+    plt.ylabel('Train Loss')
+    plt.legend()
+    plt.title('Train Loss Curve')
+    plt.grid(True)
+    plt.savefig(save_path)
+    plt.close()
+
+def plot_accuracy_curve(total_steps, val_accuracies, save_path):
     """
     绘制验证集准确率曲线
     :param epochs: epoch编号序列
@@ -41,12 +90,15 @@ def plot_accuracy_curve(epochs, val_accuracies, save_path, smooth_window=5):
     :param save_path: 保存图片的路径
     """
     plt.figure()
+    xmin = 0
+    xmax = total_steps
+    valid_steps = np.linspace(xmin, xmax, len(val_accuracies))
     # 原始曲线，减小线宽
-    plt.plot(epochs, val_accuracies, label='Val Accuracy (raw)', alpha=0.5, linewidth=1)
+    plt.plot(valid_steps, val_accuracies, label='Val Accuracy (raw)', alpha=0.5, linewidth=1)
     # 平滑曲线，减小线宽
-    val_accuracies_smooth = smooth_curve(val_accuracies, window_size=smooth_window)
-    plt.plot(epochs, val_accuracies_smooth, label='Val Accuracy (smoothed)', linewidth=1.8)
-    plt.xlabel('Epoch')
+    val_accuracies_smooth = ema_smooth_curve(val_accuracies)
+    plt.plot(valid_steps, val_accuracies_smooth, label='Val Accuracy (smoothed)', linewidth=1.8)
+    plt.xlabel('Steps')
     plt.ylabel('Accuracy (%)')
     plt.title('Validation Accuracy Curve')
     plt.legend()

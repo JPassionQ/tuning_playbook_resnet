@@ -1,4 +1,4 @@
-activation: leakey_relu
+activation: leaky_relu
 dataset_path: /home/jingqi/DeepLearningWorkshop/dataset/CIFAR-10/raw/
 epochs: 20
 eval_batch: 256

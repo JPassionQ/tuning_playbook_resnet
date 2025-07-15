@@ -57,6 +57,7 @@ def set_seed(seed=42):
     torch.backends.cudnn.benchmark = False
 
 def main():
+    set_seed(42)
     parser = argparse.ArgumentParser(description="Train a ResNet on CIFAR10")
     parser.add_argument('--config_path', type=str, required=True, help='Path to the config yaml file')
     args = parser.parse_args()
@@ -108,11 +109,11 @@ def main():
     trainset = get_dataset(dataset_path, split="train",dataset_name="CIFAR10", custom_transform=get_transforms(
         resize=(32,32),
         normalize=True,
-        # random_crop=data_augmentation.get('random_crop', False),
-        # random_horizontal_filp=data_augmentation.get('random_horizontal_filp', False),
-        # random_rotate=data_augmentation.get('random_rotate',False),
-        # color_jitter=data_augmentation.get('color_jitter', False),
-        # gaussian_blur=data_augmentation.get('gaussian_blur', False)
+        random_crop=data_augmentation.get('random_crop', False),
+        random_horizontal_filp=data_augmentation.get('random_horizontal_filp', False),
+        random_rotate=data_augmentation.get('random_rotate',False),
+        color_jitter=data_augmentation.get('color_jitter', False),
+        gaussian_blur=data_augmentation.get('gaussian_blur', False)
         )
     )
     valset = get_dataset(dataset_path, split="val", dataset_name="CIFAR10", custom_transform=get_transforms(resize=(32,32),normalize=True))
@@ -151,11 +152,15 @@ def main():
     elif optimizer_type == "RMSprop":
         optimizer = optim.RMSprop(model.parameters(), lr=lr, momentum=momentum, weight_decay=weight_decay)
 
+    # 添加分段衰减学习率调度器
+    milestones = [100, 150]
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=0.1)
+
     train_losses, val_losses = [], []
     val_accuracies = []  # 新增
     best_val_acc = 0.0
     
-    total_steps = len(train_loader.dataset) // train_batch_size * epochs
+    total_steps = len(train_loader) * epochs
     step = 0
     for epoch in range(epochs):
         model.train()
@@ -199,6 +204,8 @@ def main():
                     best_val_acc = val_acc
                     torch.save(model.state_dict(), best_ckpt_path)
                     logger.log(f"Best model saved at step {step} with val acc {best_val_acc:.2f}%", verbose=True)
+        # 每个epoch结束后调用调度器
+        scheduler.step()
 
     torch.save(model.state_dict(), last_ckpt_path)
     logger.log("Last model checkpoint saved.", verbose=True)
@@ -224,7 +231,7 @@ def main():
         loss_curve_path
     )
     plot_accuracy_curve(
-        range(1, len(val_accuracies)+1),
+        total_steps,
         val_accuracies,
         accuracy_curve_path
     )
