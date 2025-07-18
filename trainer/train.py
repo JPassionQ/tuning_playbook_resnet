@@ -34,6 +34,7 @@ def load_config(config_path):
     training_config['optimizer_type'] = config.get('optimizer_type', 'sgd')
     training_config['epochs'] = config.get('epochs', 10)
     training_config['lr'] = config.get('lr', 0.1)
+    training_config['warmup_steps'] = config.get('warmup_steps', 0)
     training_config['weight_decay'] = config.get('weight_decay', 0)
     training_config['momentum'] = config.get('momentum', 0.9)
     training_config['eval_steps'] = config.get('eval_steps', 50)
@@ -77,6 +78,7 @@ def main():
     optimizer_type = training_config['optimizer_type']
     epochs = training_config['epochs']
     lr = training_config['lr']
+    warmup_steps = training_config['warmup_steps']
     weight_decay = training_config['weight_decay']  
     momentum = training_config['momentum']
     eval_steps = training_config['eval_steps']
@@ -152,12 +154,21 @@ def main():
     elif optimizer_type == "RMSprop":
         optimizer = optim.RMSprop(model.parameters(), lr=lr, momentum=momentum, weight_decay=weight_decay)
 
-    # 添加分段衰减学习率调度器
-    milestones = [100, 150]
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=0.1)
+    # 合并warmup和MultiStepLR调度器
+    milestones = [7000, 14000]
+    def combined_lambda(step):
+        if step < warmup_steps:
+            return float(step) / float(max(1, warmup_steps))
+        elif step < milestones[0]:
+            return 1.0
+        elif step < milestones[1]:
+            return 0.1
+        else:
+            return 0.01
+    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=combined_lambda)
 
     train_losses, val_losses = [], []
-    val_accuracies = []  # 新增
+    val_accuracies = []
     best_val_acc = 0.0
     
     total_steps = len(train_loader) * epochs
@@ -172,6 +183,7 @@ def main():
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
+            scheduler.step()
             # 统计每个step的损失（取平均）
             step_loss = loss.item()
             logger.log(f"steps [{step}/{total_steps}] Train Loss: {step_loss:.2f}")
@@ -204,8 +216,6 @@ def main():
                     best_val_acc = val_acc
                     torch.save(model.state_dict(), best_ckpt_path)
                     logger.log(f"Best model saved at step {step} with val acc {best_val_acc:.2f}%", verbose=True)
-        # 每个epoch结束后调用调度器
-        scheduler.step()
 
     torch.save(model.state_dict(), last_ckpt_path)
     logger.log("Last model checkpoint saved.", verbose=True)
