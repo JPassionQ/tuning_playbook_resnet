@@ -2,6 +2,7 @@ import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.optim.lr_scheduler import SequentialLR, LinearLR, MultiStepLR, CosineAnnealingLR
 from torch.utils.data import random_split, DataLoader
 from datetime import datetime
 import argparse
@@ -34,6 +35,7 @@ def load_config(config_path):
     training_config['optimizer_type'] = config.get('optimizer_type', 'sgd')
     training_config['epochs'] = config.get('epochs', 10)
     training_config['lr'] = config.get('lr', 0.1)
+    training_config['lr_schedule'] = config.get('lr_schedule')
     training_config['warmup_steps'] = config.get('warmup_steps', 0)
     training_config['weight_decay'] = config.get('weight_decay', 0)
     training_config['momentum'] = config.get('momentum', 0.9)
@@ -78,6 +80,7 @@ def main():
     optimizer_type = training_config['optimizer_type']
     epochs = training_config['epochs']
     lr = training_config['lr']
+    lr_schedule = training_config['lr_schedule']
     warmup_steps = training_config['warmup_steps']
     weight_decay = training_config['weight_decay']  
     momentum = training_config['momentum']
@@ -154,24 +157,41 @@ def main():
     elif optimizer_type == "RMSprop":
         optimizer = optim.RMSprop(model.parameters(), lr=lr, momentum=momentum, weight_decay=weight_decay)
 
-    # 合并warmup和MultiStepLR调度器
-    milestones = [7000, 14000]
-    def combined_lambda(step):
-        if step < warmup_steps:
-            return float(step) / float(max(1, warmup_steps))
-        elif step < milestones[0]:
-            return 1.0
-        elif step < milestones[1]:
-            return 0.1
-        else:
-            return 0.01
-    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=combined_lambda)
-
+    total_steps = len(train_loader) * epochs
+    warmup_scheduler = optim.lr_scheduler.LinearLR(
+        optimizer,
+        start_factor=1e-8,
+        end_factor=1.0,
+        total_iters=warmup_steps
+    )
+    # 学习率调度规则
+    if lr_schedule == "multistep":
+        decay_scheduler = MultiStepLR(
+            optimizer,
+            milestones=[18000, 30000],
+            gamma=0.1
+        )
+    elif lr_schedule == "linear":
+        decay_scheduler = LinearLR(
+            optimizer,
+            start_factor=1.0,
+            end_factor=0.01,
+            total_iters=total_steps - warmup_steps
+        )
+    elif lr_schedule == "cosine":
+        decay_scheduler = CosineAnnealingLR(
+            optimizer,
+            T_max=(total_steps - warmup_steps) / 5,
+            eta_min=lr * 0.01
+        )
+    scheduler = SequentialLR(
+        optimizer,
+        schedulers=[warmup_scheduler, decay_scheduler],
+        milestones=[warmup_steps]
+    )
     train_losses, val_losses = [], []
     val_accuracies = []
     best_val_acc = 0.0
-    
-    total_steps = len(train_loader) * epochs
     step = 0
     for epoch in range(epochs):
         model.train()
