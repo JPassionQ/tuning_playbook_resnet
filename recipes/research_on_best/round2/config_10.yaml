@@ -1,0 +1,21 @@
+data_augmentation:
+  color_jitter: false
+  gaussian_blur: false
+  random_crop: true
+  random_horizontal_filp: true
+  random_rotate: false
+dataset_path: /home/ubuntu/DeepLearningWorkshop/dataset/CIFAR-10/raw/
+epochs: 100
+eval_batch: 256
+eval_steps: 100
+log_steps: 50
+lr: 0.001
+lr_schedule: cosine
+warmup_steps: 800
+model_layer: 18
+num_classes: 10
+optimizer_type: Adam
+res_path: /home/ubuntu/DeepLearningWorkshop/results/research_on_best/round2/config_10
+train_batch: 128
+dropout: 0.8
+weight_decay: 0.0005

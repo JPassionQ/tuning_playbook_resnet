@@ -1,0 +1,9 @@
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_augmentation/round4/config_14.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_augmentation/round4/config_10.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_augmentation/round4/config_2.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_augmentation/round4/config_6.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_augmentation/round4/config_18.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_augmentation/round4/config_3.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_augmentation/round4/config_7.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_augmentation/round4/config_15.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_augmentation/round4/config_11.yaml

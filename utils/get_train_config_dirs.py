@@ -8,7 +8,7 @@ def get_all_file_paths(directory):
     return file_paths
 
 if __name__ == "__main__":
-    dir_path = "/home/jingqi/DeepLearningWorkshop/recipes/research_on_activation/round1"
+    dir_path = "/home/jingqi/DeepLearningWorkshop/recipes"
     files = get_all_file_paths(dir_path)
     with open("/home/jingqi/DeepLearningWorkshop/recipes/research_on_activation/research_on_activation_recipes.txt", "w") as f:
         for file in files:

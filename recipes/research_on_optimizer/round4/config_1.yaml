@@ -1,0 +1,18 @@
+dataset_path: /home/ubuntu/DeepLearningWorkshop/dataset/CIFAR-10/raw/
+data_augmentation:
+  color_jitter: false
+  gaussian_blur: false
+  random_crop: true
+  random_horizontal_filp: true
+  random_rotate: false
+weight_decay: 5.0e-04
+epochs: 200
+eval_batch: 256
+eval_steps: 100
+log_steps: 50
+lr: 0.001
+model_layer: 18
+num_classes: 10
+optimizer_type: Adam
+res_path: /home/ubuntu/DeepLearningWorkshop/results/research_on_optimizer/round4/config_1
+train_batch: 128

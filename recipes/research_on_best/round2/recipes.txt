@@ -1,0 +1,7 @@
+
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_best/round2/config_9.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_best/round2/config_1.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_best/round2/config_5.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_best/round2/config_0.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_best/round2/config_4.yaml
+/home/ubuntu/DeepLearningWorkshop/recipes/research_on_best/round2/config_8.yaml
