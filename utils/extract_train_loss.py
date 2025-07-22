@@ -9,7 +9,7 @@ import re
 def main():
     train_pattern = re.compile(r"steps \[(\d+)/\d+\] Train Loss: ([\d\.]+)")
     val_pattern = re.compile(r"step \[(\d+)/\d+\] \| Val Acc: ([\d\.]+)% \| Val Loss: ([\d\.]+)")
-    res_path = "/home/jingqi/DeepLearningWorkshop/results/research_on_augmentation/round4/quadruple_aug"
+    res_path = "/home/jingqi/DeepLearningWorkshop/results/research_on_activation/round1/compare"
     train_loss_png_path = os.path.join(res_path, "train_loss_compare.png")
     val_loss_png_path = os.path.join(res_path, "val_loss_compare.png")
     val_acc_png_path = os.path.join(res_path, "val_acc_compare.png")
@@ -20,11 +20,18 @@ def main():
         "crop+flip+rotate+gaussian",
         "full"
     ]
+    activation_types = [
+        "relu",
+        "leaky_relu",
+        "gelu",
+        "silu",
+        "tanh"
+    ]
     aug_to_train_loss = {}
     aug_to_valid_loss = {}
     aug_to_valid_acc = {}
-    total_steps = 15640
-    for type_ in aug_types:
+    total_steps = 7820
+    for type_ in activation_types:
         log_path = os.path.join(res_path, f"{type_}.log")
         train_loss = []
         valid_loss = []
@@ -35,7 +42,7 @@ def main():
                 if m:
                     step = int(m.group(1))
                     loss = float(m.group(2))
-                    if step % 100 == 0 and step <= total_steps:
+                    if step % 50 == 0 and step <= total_steps:
                         train_loss.append(loss)
                 m = val_pattern.match(line)
                 if m:

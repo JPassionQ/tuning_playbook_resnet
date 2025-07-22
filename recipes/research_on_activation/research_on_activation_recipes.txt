@@ -1,1 +1,0 @@
-/home/jingqi/DeepLearningWorkshop/recipes/research_on_activation/round1/config_3.yaml
